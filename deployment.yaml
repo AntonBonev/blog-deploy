@@ -1,20 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: blog
-  namespace: default
+  labels:
+    app: flaskdemo
+  name: flaskdemo
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
-      app: blog
+      app: flaskdemo
+  strategy: {}
   template:
     metadata:
       labels:
-        app: blog
+        app: flaskdemo
     spec:
       containers:
-      - name: blog
-        image: antonbonev/blog:latest
-        ports:
-        - containerPort: 80
+      - image: antonbonev/blog
+        name: flaskdemo
+        resources: {}
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: lb-service
+  labels:
+    app: lb-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5000
+  selector:
+    app: flaskdemo
